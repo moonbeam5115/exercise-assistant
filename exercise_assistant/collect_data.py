@@ -34,7 +34,8 @@ def create_action_directories(actions):
                 pass
 
 def export_keypoint_data(src_data_path, dest_data_path):
-
+    # TODO: Write function to export data to Google Drive:
+    # https://developers.google.com/drive/api/v3/quickstart/python
     for action_folder in os.listdir(src_data_path):
         pass
 
