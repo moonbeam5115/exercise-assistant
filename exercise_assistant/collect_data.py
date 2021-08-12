@@ -4,6 +4,7 @@ import numpy as np
 import cv2
 import time
 import mediapipe as mp
+import pyttsx3
 from tools.pose import Estimator
 
 
@@ -103,6 +104,7 @@ def collect_keypoint_pose_data(actions):
                         split_lines(image, text)
                         cv2.imshow('Exercise Assistant', image)
                         cv2.waitKey(1000)
+                        pyttsx3.speak('3')
 
                         # Countdown 2
                         success, image = webcam.read()
@@ -115,6 +117,7 @@ def collect_keypoint_pose_data(actions):
                         split_lines(image, text)
                         cv2.imshow('Exercise Assistant', image)
                         cv2.waitKey(1000)
+                        pyttsx3.speak('2')
 
                         # Countdown 1
                         success, image = webcam.read()
@@ -127,6 +130,7 @@ def collect_keypoint_pose_data(actions):
                         split_lines(image, text)
                         cv2.imshow('Exercise Assistant', image)
                         cv2.waitKey(1000)
+                        pyttsx3.speak('1')
                     else:
                         text = 'Collecting frames for {} \n Video Number {}'.format(action, vid_number+1)
                         # This Collects the Data
