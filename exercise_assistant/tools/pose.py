@@ -11,6 +11,7 @@ class Estimator():
     self.mp_pose = mp.solutions.pose
 
   def draw_styled_landmarks(self, image, results):
+    # Stylize the landmarks
     self.mp_drawing.draw_landmarks(image, results.pose_landmarks, self.mp_pose.POSE_CONNECTIONS,
     self.mp_drawing.DrawingSpec(color=(50, 22, 210), thickness=2, circle_radius=1),
     self.mp_drawing.DrawingSpec(color=(120, 200, 21), thickness=2, circle_radius=1)
