@@ -6,15 +6,6 @@ from train import build_lstm
 from sklearn.metrics import multilabel_confusion_matrix, accuracy_score
 from sklearn.model_selection import train_test_split
 
-ROOT = os.path.join('exercise_assistant')
-X_PATH = os.path.join(ROOT, 'models', 'processed_data', 'X', 'features.npy')
-Y_PATH = os.path.join(ROOT, 'models', 'processed_data', 'y', 'target.npy')
-
-actions = np.array(['left_lunge', 'right_lunge', 'stand'])
-keypoints_per_frame = 132
-frames_per_video = 45
-
-MODEL_PATH = os.path.join(ROOT, 'models', 'action_recognition', 'exercise_recognition_model.h5')
 
 # Load Model Function
 def load_model(x_path, y_path, model_path, actions, keypoints_per_frame, frames_per_video):
@@ -29,9 +20,16 @@ def load_model(x_path, y_path, model_path, actions, keypoints_per_frame, frames_
     return X_test, y_test, exercise_recognition_model
 
 
-
 if __name__ == '__main__':
+    ROOT = os.path.join('exercise_assistant')
+    X_PATH = os.path.join(ROOT, 'models', 'processed_data', 'X', 'features.npy')
+    Y_PATH = os.path.join(ROOT, 'models', 'processed_data', 'y', 'target.npy')
 
+    actions = np.array(['left_lunge', 'right_lunge', 'stand'])
+    keypoints_per_frame = 132
+    frames_per_video = 45
+
+    MODEL_PATH = os.path.join(ROOT, 'models', 'action_recognition', 'exercise_recognition_model.h5')
     # Load Model and Test Data
     X_test, y_test, exercise_recognition_model = load_model(X_PATH, Y_PATH, MODEL_PATH, actions,
                                                             keypoints_per_frame, frames_per_video)
