@@ -5,7 +5,7 @@ import cv2
 import time
 import mediapipe as mp
 import pyttsx3
-from tools.pose import Estimator
+from exercise_assistant import tools
 
 
 def create_action_directories(actions, DATA_PATH):
@@ -55,7 +55,7 @@ def collect_keypoint_pose_data(actions, videos, frames_per_video):
     mp_pose = mp.solutions.pose
     color = (0, 0, 255)
     text_thickness = 2
-    estimator = Estimator()
+    estimator = tools.Estimator()
     # For webcam input:
     webcam = cv2.VideoCapture(0)
     with mp_pose.Pose(

@@ -10,6 +10,21 @@ class Estimator():
   def __init__(self):
     self.mp_drawing = mp.solutions.drawing_utils
     self.mp_pose = mp.solutions.pose
+  
+  def create_exercise_assistant(self):
+    ROOT = os.path.join('exercise_assistant')
+    X_PATH = os.path.join(ROOT, 'models', 'processed_data', 'X', 'features.npy')
+    Y_PATH = os.path.join(ROOT, 'models', 'processed_data', 'y', 'target.npy')
+
+    actions = np.array(['left_lunge', 'right_lunge', 'stand'])
+    keypoints_per_frame = 132
+    frames_per_video = 45
+
+    MODEL_PATH = os.path.join(ROOT, 'models', 'action_recognition', 'exercise_recognition_model.h5')
+    exercise_assistant = load_model(MODEL_PATH, actions,
+                                        keypoints_per_frame, frames_per_video)
+
+    return exercise_assistant
 
   def draw_styled_landmarks(self, image, results):
     # Stylize the landmarks
