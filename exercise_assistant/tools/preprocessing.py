@@ -27,12 +27,12 @@ def create_train_test_data():
             sequences.append(action_keypoints)
             labels.append(label_map[action])
     
-    X = np.array(sequences)
+    X_data = np.array(sequences)
     y = to_categorical(labels).astype(int)
 
     X_npy_path = os.path.join(ROOT, 'models', 'processed_data', 'X', 'features')
     y_npy_path = os.path.join(ROOT, 'models', 'processed_data', 'y', 'target')
-    np.save(X_npy_path, X)
+    np.save(X_npy_path, X_data)
     np.save(y_npy_path, y)
 
 
