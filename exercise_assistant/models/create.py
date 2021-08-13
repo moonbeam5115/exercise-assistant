@@ -28,7 +28,7 @@ exercise_recognition_model.load_weights(MODEL_PATH)
 
 yhat = exercise_recognition_model.predict(X_test)
 
-ytrue = np.argmax(y_test)
+ytrue = np.argmax(y_test, axis=1)
 yhat = np.argmax(yhat, axis=1)
 print(ytrue)
 print(yhat)
@@ -36,4 +36,4 @@ print(yhat)
 accuracy = accuracy_score(ytrue, yhat)
 
 #print(confusion_matrix)
-print(accuracy_score)
+print(accuracy)
