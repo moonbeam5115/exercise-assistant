@@ -32,17 +32,19 @@ def load_model(x_path, y_path, model_path, actions, keypoints_per_frame, frames_
 
 if __name__ == '__main__':
 
+    # Load Model and Test Data
     X_test, y_test, exercise_recognition_model = load_model(X_PATH, Y_PATH, MODEL_PATH, actions,
                                                             keypoints_per_frame, frames_per_video)
 
+    # Predict
     ypredicted = exercise_recognition_model.predict(X_test)
 
     ytrue = np.argmax(y_test, axis=1)
-    ypredicted = np.argmax(ypredicted, axis=1)    
-
-
+    ypredicted = np.argmax(ypredicted, axis=1)
     print(ytrue)
     print(ypredicted)
+
+    # Print performance metrics to terminal
     confusion_matrix = multilabel_confusion_matrix(ytrue, ypredicted)
     accuracy = accuracy_score(ytrue, ypredicted)
 
