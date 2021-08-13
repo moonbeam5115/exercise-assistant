@@ -8,7 +8,8 @@ import pyttsx3
 from tools.pose import Estimator
 
 
-def create_action_directories(actions):
+def create_action_directories(actions, DATA_PATH):
+    # Create directory for each action and appropriate subdirectories
     for action in actions:
         for vid_number in range(videos):
             try:
@@ -142,6 +143,7 @@ def collect_keypoint_pose_data(actions, videos, frames_per_video):
 
 
 if __name__ == '__main__':
+    DATA_PATH = os.path.join('exercise_assistant/data')
     # Actions to detect
     actions = np.array(['left_lunge', 'right_lunge', 'stand'])
 
@@ -154,7 +156,7 @@ if __name__ == '__main__':
     # Create directories for Actions - if they don't exist yet
     if not os.path.isdir('exercise_assistant/data/{}'.format(actions[0])):
         print('Creating Action Folders and Video_Number Subfolders...')
-        create_action_directories(actions)
+        create_action_directories(actions, DATA_PATH)
     
     # Begin data collection process
     print('Collecting data for training...')    
