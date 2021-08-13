@@ -1,8 +1,8 @@
 import os
-import  numpy as np
+import numpy as np
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense
-from train import build_lstm
+from exercise_assistant.models.train import build_lstm
 from sklearn.metrics import multilabel_confusion_matrix, accuracy_score
 from sklearn.model_selection import train_test_split
 
