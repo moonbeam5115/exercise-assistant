@@ -1,4 +1,3 @@
-from exercise_assistant.models.train import X_data
 from tensorflow.keras.utils import to_categorical
 import numpy as np
 import os
@@ -42,7 +41,7 @@ def create_train_test_data():
 
 
 if __name__ == '__main__':
-    X_datay, y = create_train_test_data()
+    X_data, y = create_train_test_data()
     print(np.array(X_data).shape)
     print(np.array(y).shape)
     print(len(X_data))

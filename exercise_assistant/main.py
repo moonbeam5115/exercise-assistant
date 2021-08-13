@@ -3,7 +3,6 @@ import time
 import numpy as np
 import os
 from matplotlib import pyplot as plt
-from exercise_assistant.models.loader import load_model
 
 # Repetitions will be counted when going from {Exercise Pose} back to {Resting Pose}
 
