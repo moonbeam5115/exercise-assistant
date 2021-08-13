@@ -38,6 +38,7 @@ def process_image(image, pose_model, estimator):
     return image, results
 
 def split_lines(image, text):
+    text_thickness = 2
     # Create a second Line of Text in openCV
     y0, dy = 50, 50
     for i, line in enumerate(text.split('\n')):
@@ -52,8 +53,8 @@ def collect_keypoint_pose_data(actions, videos, frames_per_video):
 
     # Pose Model
     mp_pose = mp.solutions.pose
-    text_thickness = 2
     color = (0, 0, 255)
+    text_thickness = 2
     estimator = Estimator()
     # For webcam input:
     webcam = cv2.VideoCapture(0)
