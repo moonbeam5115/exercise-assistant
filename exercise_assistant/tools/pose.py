@@ -4,27 +4,18 @@ import mediapipe as mp
 import numpy as np
 from exercise_assistant.models.loader import load_model
 
+
 # Media Pipe Pose Estimator
 class Estimator():
 
   def __init__(self):
+    ROOT = os.path.join('exercise_assistant')
     self.mp_drawing = mp.solutions.drawing_utils
     self.mp_pose = mp.solutions.pose
-  
-  def create_exercise_assistant(self):
-    ROOT = os.path.join('exercise_assistant')
-    X_PATH = os.path.join(ROOT, 'models', 'processed_data', 'X', 'features.npy')
-    Y_PATH = os.path.join(ROOT, 'models', 'processed_data', 'y', 'target.npy')
-
-    actions = np.array(['left_lunge', 'right_lunge', 'stand'])
-    keypoints_per_frame = 132
-    frames_per_video = 45
-
-    MODEL_PATH = os.path.join(ROOT, 'models', 'action_recognition', 'exercise_recognition_model.h5')
-    exercise_assistant = load_model(MODEL_PATH, actions,
-                                        keypoints_per_frame, frames_per_video)
-
-    return exercise_assistant
+    self.model_path = os.path.join(ROOT, 'models', 'action_recognition', 'exercise_recognition_model.h5')
+    self.actions = np.array(['left_lunge', 'right_lunge', 'stand'])
+    self.keypoints_per_frame = 132
+    self.frames_per_video = 45
 
   def draw_styled_landmarks(self, image, results):
     # Stylize the landmarks
@@ -39,6 +30,11 @@ class Estimator():
     return flattened_pose
 
   def estimation_loop(self):
+    sequence = []
+    action_history = []
+    threshold = 0.4
+    ai_coach = load_model(self.model_path, self.actions, self.keypoints_per_frame, self.frames_per_video)
+    
     # For webcam input:
     webcam = cv2.VideoCapture(0)
     with self.mp_pose.Pose(
