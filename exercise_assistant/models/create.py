@@ -26,14 +26,15 @@ exercise_recognition_model = build_lstm(frames_per_video, keypoints_per_frame, a
 
 exercise_recognition_model.load_weights(MODEL_PATH)
 
-yhat = exercise_recognition_model.predict(X_test)
+ypredicted = exercise_recognition_model.predict(X_test)
 
 ytrue = np.argmax(y_test, axis=1)
-yhat = np.argmax(yhat, axis=1)
+ypredicted = np.argmax(ypredicted, axis=1)
 print(ytrue)
-print(yhat)
-#confusion_matrix = multilabel_confusion_matrix(ytrue, yhat)
-accuracy = accuracy_score(ytrue, yhat)
+print(ypredicted)
+#confusion_matrix = multilabel_confusion_matrix(ytrue, ypredicted)
+accuracy = accuracy_score(ytrue, ypredicted)
+multilabel_confusion_matrix(ytrue, ypredicted)
 
 #print(confusion_matrix)
 print(accuracy)
