@@ -63,8 +63,6 @@ class Estimator():
         sequence.insert(0, flattened_keypoints)
         sequence = sequence[:45]
 
-        print(len(sequence))
-
         if len(sequence) == 45:
           action_predicted = ai_coach.predict(np.expand_dims(sequence, axis=0))[0]
           print(action_predicted)
