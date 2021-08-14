@@ -59,6 +59,13 @@ class Estimator():
         image.flags.writeable = True
         image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
         self.draw_styled_landmarks(image, results)
+        flattened_keypoints = self.transform_keypoints(results)
+        sequence.append(flattened_keypoints)
+        sequence = sequence[:30]
+
+        if len(sequence) == 30:
+              action_predicted = ai_coach.predict(np.expand_dims(sequence, axis=0))[0]
+              print(action_predicted)
 
         cv2.imshow('Exercise Assistant', image)
         if cv2.waitKey(5) & 0xFF == 27:
