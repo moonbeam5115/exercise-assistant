@@ -60,14 +60,21 @@ class Estimator():
         image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
         self.draw_styled_landmarks(image, results)
         flattened_keypoints = self.transform_keypoints(results)
-        sequence.append(flattened_keypoints)
-        sequence = sequence[:30]
+        sequence.insert(0, flattened_keypoints)
+        sequence = sequence[:45]
 
-        if len(sequence) == 30:
-              action_predicted = ai_coach.predict(np.expand_dims(sequence, axis=0))[0]
-              print(action_predicted)
-
+        if len(sequence) == 45:
+          action_predicted = ai_coach.predict(np.expand_dims(sequence, axis=0))[0]
+          print(action_predicted)
+          action_predicted = self.actions[np.argmax(action_predicted)]
+          print(action_predicted)
+          color = (120, 150, 0)
+          text_thickness = 2
+          cv2.putText(image, '{}'.format(action_predicted), (120, 80),
+                        cv2.FONT_HERSHEY_SIMPLEX, 1, color, text_thickness, cv2.LINE_AA)
+        
         cv2.imshow('Exercise Assistant', image)
+        
         if cv2.waitKey(5) & 0xFF == 27:
           break
     webcam.release()

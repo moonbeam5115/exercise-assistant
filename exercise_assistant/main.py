@@ -8,7 +8,6 @@ from matplotlib import pyplot as plt
 
 if __name__ == '__main__':
     poseEstimator = tools.Estimator()
-    exercise_assistant = poseEstimator.create_exercise_assistant()
     print("Begin Program")
     print("...")
     poseEstimator.estimation_loop()
