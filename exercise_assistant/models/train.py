@@ -1,10 +1,12 @@
 import numpy as np
 import os
+from sklearn.neighbors import KNeighborsClassifier
 from sklearn.model_selection import train_test_split
 from tensorflow.keras import callbacks
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense
 from tensorflow.keras.callbacks import TensorBoard
+from joblib import dump, load
 
 class ModelTrainer():
 
@@ -14,9 +16,9 @@ class ModelTrainer():
         self.videos = 30
         self.frames_per_video = 30
     
-    def build_knn(frames_per_video, keypoints_per_frame, pose_bank):
+    def build_knn(self, num_neighbors=5):
         # Build Model Logic goes here
-        Model = None
+        Model = KNeighborsClassifier(num_neighbors)
         return Model
 
     def train_knn(self, model):
@@ -27,16 +29,12 @@ class ModelTrainer():
         y = np.load(y_path)
 
         X_train, X_test, y_train, y_test = train_test_split(X_data, y, test_size=0.1, random_state=42)
-
-        # log_dir = os.path.join(self.MODEL_PATH, 'logs')
-        # tb_callback = TensorBoard(log_dir=log_dir)
         model.fit(X_train, y_train)
 
         return model
 
     def save_model(self, model, dest_directory):
-        out_file_path = os.path.join(dest_directory, 'pose_classification_model.h5')
-        model.save(out_file_path)
+        dump(model, dest_directory)
 
 def build_lstm(frames_per_video, keypoints_per_frame, actions):
     model = Sequential()
@@ -59,10 +57,10 @@ if __name__ == '__main__':
     pose_bank = np.array(['stand', 'right_lunge', 'left_lunge', 'other'])
 
     model_manager = ModelTrainer(MODEL_PATH, pose_bank)
-    exercise_assistant = model_manager.build_knn(keypoints_per_frame, pose_bank)
+    exercise_assistant = model_manager.build_knn()
     
     print("Training Neural Network...")
     trained_assistant = model_manager.train_knn(exercise_assistant)
     print("Training Complete!")
-    MODEL_OUT_PATH = os.path.join(MODEL_PATH, 'classification')
+    MODEL_OUT_PATH = os.path.join(MODEL_PATH, 'classification', 'pose_classifier.joblib')
     model_manager.save_model(trained_assistant, MODEL_OUT_PATH)
