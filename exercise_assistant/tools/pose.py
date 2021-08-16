@@ -13,7 +13,7 @@ class Estimator():
     self.mp_drawing = mp.solutions.drawing_utils
     self.mp_pose = mp.solutions.pose
     self.model_path = os.path.join(ROOT, 'models', 'action_recognition', 'exercise_recognition_model.h5')
-    self.actions = np.array(['left_lunge', 'right_lunge', 'stand'])
+    self.exercise_pose = np.array(['left_lunge', 'right_lunge', 'stand'])
     self.keypoints_per_frame = 132
     self.frames_per_video = 45
 
@@ -67,7 +67,7 @@ class Estimator():
         if len(sequence) == 45:
           action_predicted = ai_coach.predict(np.expand_dims(sequence, axis=0))[0]
           print(action_predicted)
-          action_predicted = self.actions[np.argmax(action_predicted)]
+          action_predicted = self.exercise_pose[np.argmax(action_predicted)]
           print(action_predicted)
           color = (120, 150, 0)
           text_thickness = 2
