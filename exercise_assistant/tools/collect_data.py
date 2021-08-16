@@ -152,7 +152,7 @@ if __name__ == '__main__':
 
     # Create directories for exercise_poses - if they don't exist yet
     if not os.path.isdir('exercise_assistant/data/{}'.format(exercise_poses[0])):
-        print('Creating Action Folders and Video_Number Subfolders...')
+        print('Creating Exercise Pose Folders and Video_Number Subfolders...')
         create_pose_directories(exercise_poses, DATA_PATH)
     
     # Begin data collection process

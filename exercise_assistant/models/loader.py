@@ -26,6 +26,7 @@ if __name__ == '__main__':
     ml = ModelLoader()
     # Load Model and Perform Validation (TODO)
     pose_classification_model = ml.load_knn_model(MODEL_PATH)
+    print("Load Successful")
     # X_data = np.load(X_PATH)
     # y = np.load(Y_PATH)
     # X_train, X_test, y_train, y_test = train_test_split(X_data, y, test_size=0.1, random_state=42)

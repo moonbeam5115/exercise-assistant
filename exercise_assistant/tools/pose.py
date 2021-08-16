@@ -2,7 +2,7 @@ import cv2
 import os
 import mediapipe as mp
 import numpy as np
-from exercise_assistant.models.loader import load_model
+from exercise_assistant.models.loader import ModelLoader
 
 
 # Media Pipe Pose Estimator
