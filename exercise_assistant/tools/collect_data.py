@@ -5,7 +5,7 @@ import cv2
 import time
 import mediapipe as mp
 import pyttsx3
-from exercise_assistant import tools
+from exercise_assistant.tools.pose import  Estimator
 
 
 def create_action_directories(actions, DATA_PATH):
@@ -55,14 +55,13 @@ def collect_keypoint_pose_data(actions, videos, frames_per_video):
     mp_pose = mp.solutions.pose
     color = (0, 0, 255)
     text_thickness = 2
-    estimator = tools.Estimator()
+    estimator = Estimator()
     # For webcam input:
     webcam = cv2.VideoCapture(0)
     with mp_pose.Pose(
             min_detection_confidence=0.5,
             min_tracking_confidence=0.5) as pose:
 
-        
         for action in actions:
             # Loop through actions
             print('Collecting Key Point Data for {}'.format(action))
@@ -77,12 +76,11 @@ def collect_keypoint_pose_data(actions, videos, frames_per_video):
                         # If loading a video, use 'break' instead of 'continue'.
                         continue
                     scale_percent = 130
-                    width = int(image.shape[1]*scale_percent/100)
-                    height = int(image.shape[0]*scale_percent/100)
-                    dsize = (width, height)
-                    image = cv2.resize(image, dsize)
+                    frame_width = int(image.shape[1])
+                    frame_height = int(image.shape[0])
+                    desired_size = (int(frame_width*scale_percent/100), int(frame_height*scale_percent/100))
+                    image = cv2.resize(image, desired_size)
                     image, result = process_image(image, pose, estimator)
-
 
                     # Apply collection logic
                     if frame_number == 0:
@@ -100,7 +98,7 @@ def collect_keypoint_pose_data(actions, videos, frames_per_video):
 
                         # Countdown 2
                         success, image = webcam.read()
-                        image = cv2.resize(image, dsize)
+                        image = cv2.resize(image, desired_size)
                         image, result = process_image(image, pose, estimator)
                         cv2.putText(image, 'STARTING COLLECTION', (120, 200),
                             cv2.FONT_HERSHEY_SIMPLEX, 1, color, text_thickness, cv2.LINE_AA)
@@ -113,7 +111,7 @@ def collect_keypoint_pose_data(actions, videos, frames_per_video):
 
                         # Countdown 1
                         success, image = webcam.read()
-                        image = cv2.resize(image, dsize)
+                        image = cv2.resize(image, desired_size)
                         image, result = process_image(image, pose, estimator)
                         cv2.putText(image, 'STARTING COLLECTION', (120, 200),
                             cv2.FONT_HERSHEY_SIMPLEX, 1, color, text_thickness, cv2.LINE_AA)
@@ -124,14 +122,12 @@ def collect_keypoint_pose_data(actions, videos, frames_per_video):
                         cv2.waitKey(1000)
                         pyttsx3.speak('1')
                     else:
+                        # Show real time feedback for user
                         text = 'Collecting frames for {} \n Video Number {}'.format(action, vid_number+1)
-                        # This Collects the Data
-                        
                         split_lines(image, text)
-                        #process_image(image, pose)
                         cv2.imshow('Exercise Assistant', image)
-                    
-                    # Export Keypoints
+                    # This Collects the Data 
+                    # Transform (Flatten) and Export Keypoints
                     keypoints = estimator.transform_keypoints(result)
                     npy_path = os.path.join(DATA_PATH, action, str(vid_number), str(frame_number))
                     np.save(npy_path, keypoints)

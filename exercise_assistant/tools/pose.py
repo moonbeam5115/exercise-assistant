@@ -26,7 +26,8 @@ class Estimator():
 
   def transform_keypoints(self, results):
     # Flatten Array of Key Points to feed into NN Model
-    flattened_pose = np.array([[res.x, res.y, res.z, res.visibility] for res in results.pose_landmarks.landmark]).flatten() if results.pose_landmarks else np.zeros(33*4)
+    # Only considering x, y coordinates on image for now
+    flattened_pose = np.array([[res.x, res.y] for res in results.pose_landmarks.landmark]).flatten() if results.pose_landmarks else np.zeros(33*4)
     return flattened_pose
 
   def estimation_loop(self):
