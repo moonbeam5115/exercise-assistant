@@ -6,7 +6,7 @@ from tensorflow.keras import callbacks
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense
 from tensorflow.keras.callbacks import TensorBoard
-from joblib import dump, load
+from joblib import dump
 
 class ModelTrainer():
 
