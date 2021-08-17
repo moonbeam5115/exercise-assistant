@@ -7,14 +7,21 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense
 from tensorflow.keras.callbacks import TensorBoard
 from joblib import dump
+import argparse
+
+parser = argparse.ArgumentParser(description='Collect Some Data for Computer Vision Applications.')
+parser.add_argument("--videos", default=30, help="Number of videos per pose to collect", type=int)
+parser.add_argument("--fpv", default=30, help="Frames per video to collect", type=int)
+
+args = parser.parse_args()
 
 class ModelTrainer():
 
-    def __init__(self, MODEL_PATH, pose_bank):
+    def __init__(self, MODEL_PATH, pose_bank, videos, frames_per_video):
         self.MODEL_PATH = MODEL_PATH
         self.pose_bank = pose_bank
-        self.videos = 30
-        self.frames_per_video = 30
+        self.videos = videos
+        self.frames_per_video = frames_per_video
     
     def build_knn(self, num_neighbors=5):
         # Build Model Logic goes here
@@ -27,8 +34,12 @@ class ModelTrainer():
 
         X_data = np.load(x_path)
         y = np.load(y_path)
-
+        print(X_data.shape)
+        print(y.shape)
         X_train, X_test, y_train, y_test = train_test_split(X_data, y, test_size=0.1, random_state=42)
+        dim1 = X_train.shape[0]
+        dim2 = int(X_train.shape[1]*X_train.shape[2])
+        X_train = np.reshape(X_train, (dim1, dim2))
         model.fit(X_train, y_train)
 
         return model
@@ -52,11 +63,12 @@ def build_lstm(frames_per_video, keypoints_per_frame, actions):
 
 if __name__ == '__main__':
     MODEL_PATH = os.path.join('exercise_assistant', 'models')
-    keypoints_per_frame = 66
-    frames_per_video = 30
+    #keypoints_per_frame = 66 Used for LSTM
+    videos = args.videos
+    frames_per_video = args.fpv
     pose_bank = np.array(['stand', 'right_lunge', 'left_lunge', 'other'])
 
-    model_manager = ModelTrainer(MODEL_PATH, pose_bank)
+    model_manager = ModelTrainer(MODEL_PATH, pose_bank, videos, frames_per_video)
     exercise_assistant = model_manager.build_knn()
     
     print("Training Neural Network...")

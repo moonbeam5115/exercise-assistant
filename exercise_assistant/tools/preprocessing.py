@@ -1,20 +1,26 @@
-from exercise_assistant.models.loader import MODEL_PATH
-from exercise_assistant.models.train import MODEL_OUT_PATH
 from tensorflow.keras.utils import to_categorical
 import numpy as np
 import os
+import argparse
 
 # A sequence is a group of frames representing an action
 # Sequences are all the groups of frames representing all actions - our features AKA X (input)
 # Labels will be our target variable (true value for action) - y (output)
 
+parser = argparse.ArgumentParser(description='Collect Some Data for Computer Vision Applications.')
+parser.add_argument("--videos", default=30, help="Number of videos per pose to collect", type=int)
+parser.add_argument("--fpv", default=30, help="Frames per video to collect", type=int)
+
+args = parser.parse_args()
+
 class CreateTrainTestData():
 
-    def __init__(self, DATA_PATH):
+    def __init__(self, DATA_PATH, videos, frames_per_video):
         self.DATA_PATH = DATA_PATH
+        self.model_path = os.path.join('exercise_assistant', 'models')
         self.pose_bank = np.array(['stand', 'right_lunge', 'left_lunge', 'other'])
-        self.videos = 30
-        self.frames_per_video = 30
+        self.videos = videos
+        self.frames_per_video = frames_per_video
     
     def preprocess_lstm(self):
         pass
@@ -32,10 +38,12 @@ class CreateTrainTestData():
                 pose_keypoints = []
                 for frame_number in range(frames_per_video):
                     try:
-                        frame_keypoints = np.load(self.DATA_PATH, exercise_pose, str(vid_number), "{}.npy".format(frame_number))
+                        path_to_keypoint_data = os.path.join(self.DATA_PATH, '{}'.format(exercise_pose), str(vid_number), "{}.npy".format(frame_number))
+                        frame_keypoints = np.load(path_to_keypoint_data)
                         pose_keypoints.append(frame_keypoints)
                     except Exception as e:
                         print(e)
+                        print("trouble accessing")
                 sequences.append(pose_keypoints)
                 labels.append(label_map[exercise_pose])
     
@@ -45,7 +53,7 @@ class CreateTrainTestData():
         y = to_categorical(labels).astype(int)
 
         if save:
-            MODEL_OUT_PATH = os.path.join(MODEL_PATH, 'processed_data')
+            MODEL_OUT_PATH = os.path.join(self.model_path, 'processed_data')
             print("Saving Preprocessed Results to {}".format(MODEL_OUT_PATH))
             X_npy_path = os.path.join(MODEL_OUT_PATH, 'X', 'features')
             y_npy_path = os.path.join(MODEL_OUT_PATH, 'y', 'target')
@@ -57,7 +65,9 @@ class CreateTrainTestData():
 
 if __name__ == '__main__':
     DATA_PATH = os.path.join('exercise_assistant', 'data')
-    data_manager = CreateTrainTestData(DATA_PATH)
+    videos = args.videos
+    frames_per_video = args.fpv
+    data_manager = CreateTrainTestData(DATA_PATH, videos, frames_per_video)
     X_data, y = data_manager.preprocess_knn(save=True)
     print(np.array(X_data).shape)
     print(np.array(y).shape)
