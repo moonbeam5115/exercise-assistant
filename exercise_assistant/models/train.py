@@ -13,7 +13,7 @@ import shutil
 parser = argparse.ArgumentParser(description='Collect Some Data for Computer Vision Applications.')
 parser.add_argument("--videos", default=30, help="Number of videos per pose to collect", type=int)
 parser.add_argument("--fpv", default=30, help="Frames per video to collect", type=int)
-parser.add_argument("--save", default=False, help="Save Results to DB", action="store_true", type=bool)
+parser.add_argument("--save", help="Save Results to DB", action="store_true")
 
 args = parser.parse_args()
 
@@ -36,7 +36,7 @@ class ModelTrainer():
 
         X_data = np.load(x_path, allow_pickle=True)
         y = np.load(y_path, allow_pickle=True)
-
+        X_data = np.array(X_data)
         X_train, X_test, y_train, y_test = train_test_split(X_data, y, test_size=0.1, random_state=42)
         print("X_TRAIN SHAPE: ", X_train.shape)
         print("y_TRAIN SHAPE: ", y_train.shape)
@@ -83,24 +83,28 @@ if __name__ == '__main__':
     print("Training Complete!")
     MODEL_OUT_PATH = os.path.join(MODEL_PATH, 'classification', 'pose_classifier.joblib')
     model_manager.save_model(trained_assistant, MODEL_OUT_PATH)
-
-    if args.save:
+    save_condition = len(os.listdir(DATA_PATH))
+    if args.save and (save_condition == len(pose_bank)):
+        print("DATA SAVED!")
         x_path = os.path.join(MODEL_PATH, 'processed_data', 'X', 'features.npy')
         y_path = os.path.join(MODEL_PATH, 'processed_data', 'y', 'target.npy')
         # if --save: Save Model, Processed_Data (X, y) - Then Remove
         if os.path.exists(PIPELINE_OUT_PATH):
-            model_manager.save_model(trained_assistant, PIPELINE_OUT_PATH)
+            model_file_path = os.path.join(PIPELINE_OUT_PATH, 'KNN_model.joblib')
+            model_manager.save_model(trained_assistant, model_file_path)
             shutil.copy(x_path, PIPELINE_OUT_PATH)
             shutil.copy(y_path, PIPELINE_OUT_PATH)
             os.remove(MODEL_OUT_PATH)
             os.remove(x_path)
             os.remove(y_path)
-            
+
             # Save Raw Data Folders
             if os.path.exists(DATA_PATH):
                 # Save to Google Drive and Delete from local machine
                 # TODO SAVE LOGIC GOES HERE
                 for dir in os.listdir(DATA_PATH):
-                    pose_folder_path = os.path.join(DATA_PATH, dir) 
-                    shutil.copytree(pose_folder_path, PIPELINE_OUT_PATH)
+                    pose_folder_path = os.path.join(DATA_PATH, dir)
+                    final_path = os.path.join(PIPELINE_OUT_PATH, 'Data')
+                    if not os.path.exists(final_path):
+                        shutil.copytree(pose_folder_path, final_path)
                     shutil.rmtree(pose_folder_path)
