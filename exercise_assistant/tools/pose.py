@@ -12,8 +12,8 @@ class Estimator():
     ROOT = os.path.join('exercise_assistant')
     self.mp_drawing = mp.solutions.drawing_utils
     self.mp_pose = mp.solutions.pose
-    self.model_path = os.path.join(ROOT, 'models', 'action_recognition', 'exercise_recognition_model.h5')
-    self.exercise_pose = np.array(['left_lunge', 'right_lunge', 'stand'])
+    self.model_path = os.path.join(ROOT, 'models', 'classification', 'pose_classifier.joblib')
+    self.pose_bank = np.array(['stand', 'right_lunge', 'left_lunge', 'other'])
     self.keypoints_per_frame = 132
     self.frames_per_video = 45
 
@@ -34,7 +34,7 @@ class Estimator():
     sequence = []
     action_history = []
     threshold = 0.4
-    ai_coach = load_model(self.model_path, self.actions, self.keypoints_per_frame, self.frames_per_video)
+    ai_coach = ModelLoader.load_knn_model(self.model_path)
     
     # For webcam input:
     webcam = cv2.VideoCapture(0)
@@ -67,7 +67,7 @@ class Estimator():
         if len(sequence) == 45:
           action_predicted = ai_coach.predict(np.expand_dims(sequence, axis=0))[0]
           print(action_predicted)
-          action_predicted = self.exercise_pose[np.argmax(action_predicted)]
+          action_predicted = self.pose_bank[np.argmax(action_predicted)]
           print(action_predicted)
           color = (120, 150, 0)
           text_thickness = 2
