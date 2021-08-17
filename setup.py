@@ -8,6 +8,7 @@ setup(name='exercise_assistant',
         'tensorflow==2.5.0',
         'scikit-learn==0.24.2',
         'mediapipe==0.8.3',
-        'pyttsx3==2.90'
+        'pyttsx3==2.90',
+        'pydrive==1.3.1'
     ]
 )

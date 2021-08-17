@@ -153,7 +153,9 @@ if __name__ == '__main__':
     # Number of frames for each video
     frames_per_video = args.fpv
     keypoints_per_frame = args.kppf
-    DATA_PATH = os.path.join('exercise_assistant/data')
+    DATA_PATH = os.path.join('exercise_assistant', 'data')
+    PROC_DATA_PATH = os.path.join('exercise_assistant', 'models', 'processed_data')
+
     # Exercise Poses to detect
     pose_bank = np.array(['right_lunge', 'left_lunge', 'stand', 'other'])
 
@@ -162,7 +164,24 @@ if __name__ == '__main__':
         print(len(os.listdir(DATA_PATH)))
         print('Creating Exercise Pose Folders and Video_Number Subfolders...')
         create_pose_directories(pose_bank, DATA_PATH, videos)
-    
+    else:
+        # Delete files from previous runs and create Folders + Subfolders
+        print("Removing Previous Files...")
+        if os.path.exists(DATA_PATH):
+            for dir in os.listdir(DATA_PATH):
+                if os.path.isdir(dir):
+                    dirpath = os.path.join(DATA_PATH, dir)
+                    shutil.rmtree(dirpath)
+        if os.path.exists(PROC_DATA_PATH):
+            for dir in os.listdir(PROC_DATA_PATH):
+                if os.path.isdir(dir):
+                    dirpath = os.path.join(PROC_DATA_PATH, dir)
+                    for _file in dirpath:
+                        _file_path = os.path.join(dirpath, _file)
+                        os.remove(_file_path)
+        print('Creating Exercise Pose Folders and Video_Number Subfolders...')
+        create_pose_directories(pose_bank, DATA_PATH, videos)
+
     # Begin data collection process
     print('Collecting Training Data for {} Videos \n @ {} Frames per Video'.format(videos, frames_per_video))    
     collect_keypoint_pose_data(pose_bank, videos, frames_per_video, keypoints_per_frame)

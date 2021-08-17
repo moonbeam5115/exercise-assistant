@@ -7,4 +7,7 @@ exercise_assistant/models/logs/
 exercise_assistant/models/action_recognition/
 exercise_assistant.egg-info/
 exercise_assistant/models/classification/
+config/
+gDrive_Output
+client_secrets.json
 mprocessing.py

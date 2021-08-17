@@ -8,10 +8,12 @@ from tensorflow.keras.layers import LSTM, Dense
 from tensorflow.keras.callbacks import TensorBoard
 from joblib import dump
 import argparse
+import shutil
 
 parser = argparse.ArgumentParser(description='Collect Some Data for Computer Vision Applications.')
 parser.add_argument("--videos", default=30, help="Number of videos per pose to collect", type=int)
 parser.add_argument("--fpv", default=30, help="Frames per video to collect", type=int)
+parser.add_argument("--save", default=False, help="Save Results to DB", action="store_true", type=bool)
 
 args = parser.parse_args()
 
@@ -65,7 +67,9 @@ def build_lstm(frames_per_video, keypoints_per_frame, actions):
 
 
 if __name__ == '__main__':
+    PIPELINE_OUT_PATH = os.path.join('gDrive_Output') # Place output location here
     MODEL_PATH = os.path.join('exercise_assistant', 'models')
+    DATA_PATH = os.path.join('exercise_assistant', 'data')
     #keypoints_per_frame = 66 Used for LSTM
     videos = args.videos
     frames_per_video = args.fpv
@@ -79,3 +83,24 @@ if __name__ == '__main__':
     print("Training Complete!")
     MODEL_OUT_PATH = os.path.join(MODEL_PATH, 'classification', 'pose_classifier.joblib')
     model_manager.save_model(trained_assistant, MODEL_OUT_PATH)
+
+    if args.save:
+        x_path = os.path.join(MODEL_PATH, 'processed_data', 'X', 'features.npy')
+        y_path = os.path.join(MODEL_PATH, 'processed_data', 'y', 'target.npy')
+        # if --save: Save Model, Processed_Data (X, y) - Then Remove
+        if os.path.exists(PIPELINE_OUT_PATH):
+            model_manager.save_model(trained_assistant, PIPELINE_OUT_PATH)
+            shutil.copy(x_path, PIPELINE_OUT_PATH)
+            shutil.copy(y_path, PIPELINE_OUT_PATH)
+            os.remove(MODEL_OUT_PATH)
+            os.remove(x_path)
+            os.remove(y_path)
+            
+            # Save Raw Data Folders
+            if os.path.exists(DATA_PATH):
+                # Save to Google Drive and Delete from local machine
+                # TODO SAVE LOGIC GOES HERE
+                for dir in os.listdir(DATA_PATH):
+                    pose_folder_path = os.path.join(DATA_PATH, dir) 
+                    shutil.copytree(pose_folder_path, PIPELINE_OUT_PATH)
+                    shutil.rmtree(pose_folder_path)
