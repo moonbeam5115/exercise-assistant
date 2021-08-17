@@ -152,13 +152,13 @@ if __name__ == '__main__':
     frames_per_video = args.fpv
     DATA_PATH = os.path.join('exercise_assistant/data')
     # Exercise Poses to detect
-    exercise_poses = np.array(['right_lunge', 'left_lunge', 'stand', 'other'])
+    pose_bank = np.array(['right_lunge', 'left_lunge', 'stand', 'other'])
 
     # Create directories for exercise_poses - if they don't exist yet
-    if not os.path.isdir('exercise_assistant/data/{}'.format(exercise_poses[0])):
+    if not os.path.isdir('exercise_assistant/data/{}'.format(pose_bank[0])):
         print('Creating Exercise Pose Folders and Video_Number Subfolders...')
-        create_pose_directories(exercise_poses, DATA_PATH, videos)
+        create_pose_directories(pose_bank, DATA_PATH, videos)
     
     # Begin data collection process
     print('Collecting Training Data for {} Videos \n @ {} Frames per Video'.format(videos, frames_per_video))    
-    collect_keypoint_pose_data(exercise_poses, videos, frames_per_video)
+    collect_keypoint_pose_data(pose_bank, videos, frames_per_video)
