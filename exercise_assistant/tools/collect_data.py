@@ -6,12 +6,18 @@ import time
 import mediapipe as mp
 import pyttsx3
 from exercise_assistant.tools.pose import  Estimator
+import argparse
 
+parser = argparse.ArgumentParser(description='Collect Some Data for Computer Vision Applications.')
+parser.add_argument("--videos", default=30, help="Number of videos per pose to collect", type=int)
+parser.add_argument("--fpv", default=30, help="Frames per video to collect", type=int)
 
-def create_pose_directories(pose_bank, DATA_PATH):
+args = parser.parse_args()
+
+def create_pose_directories(pose_bank, DATA_PATH, num_vids):
     # Create directory for each action and appropriate subdirectories
     for exercise_pose in pose_bank:
-        for vid_number in range(videos):
+        for vid_number in range(num_vids):
             try:
                 os.makedirs(os.path.join(DATA_PATH, exercise_pose, str(vid_number)))
             except Exception as e:
@@ -140,21 +146,19 @@ def collect_keypoint_pose_data(pose_bank, videos, frames_per_video):
 
 
 if __name__ == '__main__':
+    # Number of videos to collect data for
+    videos = args.videos
+    # Number of frames for each video
+    frames_per_video = args.fpv
     DATA_PATH = os.path.join('exercise_assistant/data')
     # Exercise Poses to detect
-    exercise_poses = np.array(['left_lunge', 'right_lunge', 'stand'])
-
-    # Number of Videos worth of data
-    videos = 30
-
-    # Number of frames in each video
-    frames_per_video = 45
+    exercise_poses = np.array(['right_lunge', 'left_lunge', 'stand', 'other'])
 
     # Create directories for exercise_poses - if they don't exist yet
     if not os.path.isdir('exercise_assistant/data/{}'.format(exercise_poses[0])):
         print('Creating Exercise Pose Folders and Video_Number Subfolders...')
-        create_pose_directories(exercise_poses, DATA_PATH)
+        create_pose_directories(exercise_poses, DATA_PATH, videos)
     
     # Begin data collection process
-    print('Collecting data for training...')    
+    print('Collecting Training Data for {} Videos \n @ {} Frames per Video'.format(videos, frames_per_video))    
     collect_keypoint_pose_data(exercise_poses, videos, frames_per_video)
