@@ -11,6 +11,7 @@ import argparse
 parser = argparse.ArgumentParser(description='Collect Some Data for Computer Vision Applications.')
 parser.add_argument("--videos", default=30, help="Number of videos per pose to collect", type=int)
 parser.add_argument("--fpv", default=30, help="Frames per video to collect", type=int)
+parser.add_argument("--kppf", default=66, help="Frames per video to collect", type=int)
 
 args = parser.parse_args()
 
@@ -53,7 +54,7 @@ def split_lines(image, text):
             cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), text_thickness, cv2.LINE_AA)
 
 
-def collect_keypoint_pose_data(pose_bank, videos, frames_per_video):
+def collect_keypoint_pose_data(pose_bank, videos, frames_per_video, keypoints_per_frame):
     # Path Variable
     DATA_PATH = os.path.join('exercise_assistant', 'data')
 
@@ -62,6 +63,7 @@ def collect_keypoint_pose_data(pose_bank, videos, frames_per_video):
     color = (0, 0, 255)
     text_thickness = 2
     estimator = Estimator()
+    keypoints_per_frame = keypoints_per_frame
     # For webcam input:
     webcam = cv2.VideoCapture(0)
     with mp_pose.Pose(
@@ -134,7 +136,7 @@ def collect_keypoint_pose_data(pose_bank, videos, frames_per_video):
                         cv2.imshow('Exercise Assistant', image)
                     # This Collects the Data 
                     # Transform (Flatten) and Export Keypoints
-                    keypoints = estimator.transform_keypoints(result)
+                    keypoints = estimator.transform_keypoints(result, keypoints_per_frame)
                     npy_path = os.path.join(DATA_PATH, exercise_pose, str(vid_number), str(frame_number))
                     np.save(npy_path, keypoints)
 
@@ -150,15 +152,17 @@ if __name__ == '__main__':
     videos = args.videos
     # Number of frames for each video
     frames_per_video = args.fpv
+    keypoints_per_frame = args.kppf
     DATA_PATH = os.path.join('exercise_assistant/data')
     # Exercise Poses to detect
     pose_bank = np.array(['right_lunge', 'left_lunge', 'stand', 'other'])
 
     # Create directories for exercise_poses - if they don't exist yet
-    if not os.path.isdir('exercise_assistant/data/{}'.format(pose_bank[0])):
+    if len(os.listdir(DATA_PATH)) == 0:
+        print(len(os.listdir(DATA_PATH)))
         print('Creating Exercise Pose Folders and Video_Number Subfolders...')
         create_pose_directories(pose_bank, DATA_PATH, videos)
     
     # Begin data collection process
     print('Collecting Training Data for {} Videos \n @ {} Frames per Video'.format(videos, frames_per_video))    
-    collect_keypoint_pose_data(pose_bank, videos, frames_per_video)
+    collect_keypoint_pose_data(pose_bank, videos, frames_per_video, keypoints_per_frame)

@@ -39,7 +39,7 @@ class CreateTrainTestData():
                 for frame_number in range(frames_per_video):
                     try:
                         path_to_keypoint_data = os.path.join(self.DATA_PATH, '{}'.format(exercise_pose), str(vid_number), "{}.npy".format(frame_number))
-                        frame_keypoints = np.load(path_to_keypoint_data)
+                        frame_keypoints = np.load(path_to_keypoint_data, allow_pickle=True)
                         pose_keypoints.append(frame_keypoints)
                     except Exception as e:
                         print(e)
@@ -49,6 +49,7 @@ class CreateTrainTestData():
     
         # X_data is the features (List of keypoint positions + visibility) that describe the action
         # y is the target value (The ground truth for that action)
+
         X_data = np.array(sequences)
         y = to_categorical(labels).astype(int)
 
@@ -57,8 +58,8 @@ class CreateTrainTestData():
             print("Saving Preprocessed Results to {}".format(MODEL_OUT_PATH))
             X_npy_path = os.path.join(MODEL_OUT_PATH, 'X', 'features')
             y_npy_path = os.path.join(MODEL_OUT_PATH, 'y', 'target')
-            np.save(X_npy_path, X_data)
-            np.save(y_npy_path, y)
+            np.save(X_npy_path, X_data, allow_pickle=True)
+            np.save(y_npy_path, y, allow_pickle=True)
 
         return X_data, y
 
@@ -69,8 +70,7 @@ if __name__ == '__main__':
     frames_per_video = args.fpv
     data_manager = CreateTrainTestData(DATA_PATH, videos, frames_per_video)
     X_data, y = data_manager.preprocess_knn(save=True)
-    print(np.array(X_data).shape)
-    print(np.array(y).shape)
-    print(len(X_data))
-    # (90, 30, 66)
+    print("X DATA SHAPE: ", np.array(X_data).shape)
+    print("y DATA SHAPE: ", np.array(y).shape)
+    # (30, 30, 66)
     # (Videos, Frames_per_video, Keypoints_per_frame)

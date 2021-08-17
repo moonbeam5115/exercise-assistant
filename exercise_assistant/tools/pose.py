@@ -24,10 +24,10 @@ class Estimator():
     self.mp_drawing.DrawingSpec(color=(120, 200, 21), thickness=2, circle_radius=1)
     )
 
-  def transform_keypoints(self, results):
+  def transform_keypoints(self, results, keypoint_values=66):
     # Flatten Array of Key Points to feed into NN Model
     # Only considering x, y coordinates on image for now
-    flattened_pose = np.array([[res.x, res.y] for res in results.pose_landmarks.landmark]).flatten() if results.pose_landmarks else np.zeros(33*4)
+    flattened_pose = np.array([[res.x, res.y] for res in results.pose_landmarks.landmark]).flatten() if results.pose_landmarks else np.zeros(keypoint_values)
     return flattened_pose
 
   def estimation_loop(self):
