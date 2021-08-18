@@ -29,28 +29,27 @@ class CreateTrainTestData():
         videos = self.videos
         frames_per_video = self.frames_per_video
         pose_bank = self.pose_bank
-
+        keypoints_per_frame = 66
         label_map = {label:num for num, label in enumerate(pose_bank)}
-        sequences, labels = [], []
+        total_poses, labels = [], []
 
         for exercise_pose in pose_bank:
             for vid_number in range(videos):
-                pose_keypoints = []
                 for frame_number in range(frames_per_video):
                     try:
                         path_to_keypoint_data = os.path.join(self.DATA_PATH, '{}'.format(exercise_pose), str(vid_number), "{}.npy".format(frame_number))
                         frame_keypoints = np.load(path_to_keypoint_data, allow_pickle=True)
-                        pose_keypoints.append(frame_keypoints)
+                        total_poses.append(frame_keypoints)
+                        labels.append(label_map[exercise_pose])
                     except Exception as e:
                         print(e)
                         print("trouble accessing")
-                sequences.append(pose_keypoints)
-                labels.append(label_map[exercise_pose])
+                
     
         # X_data is the features (List of keypoint positions + visibility) that describe the action
         # y is the target value (The ground truth for that action)
 
-        X_data = np.array(sequences)
+        X_data = np.array(total_poses)
         y = to_categorical(labels).astype(int)
 
         if save:

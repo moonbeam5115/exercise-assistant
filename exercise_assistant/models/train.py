@@ -36,15 +36,10 @@ class ModelTrainer():
 
         X_data = np.load(x_path, allow_pickle=True)
         y = np.load(y_path, allow_pickle=True)
-        X_data = np.array(X_data)
         X_train, X_test, y_train, y_test = train_test_split(X_data, y, test_size=0.1, random_state=42)
         print("X_TRAIN SHAPE: ", X_train.shape)
         print("y_TRAIN SHAPE: ", y_train.shape)
 
-        nested_dim = X_train[1].shape
-        dim1 = X_train.shape[0]
-        dim2 = int(nested_dim[0]*nested_dim[1])
-        X_train = np.reshape(X_train, (dim1, dim2))
         model.fit(X_train, y_train)
 
         return model
