@@ -3,6 +3,7 @@ import os
 import mediapipe as mp
 import numpy as np
 from exercise_assistant.models.loader import ModelLoader
+from joblib import load
 
 
 # Media Pipe Pose Estimator
@@ -34,7 +35,7 @@ class Estimator():
     sequence = []
     action_history = []
     threshold = 0.4
-    ai_coach = ModelLoader.load_knn_model(self.model_path)
+    ai_coach = load('gDrive_Output/KNN_model.joblib')
     
     # For webcam input:
     webcam = cv2.VideoCapture(0)
@@ -61,18 +62,16 @@ class Estimator():
         image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
         self.draw_styled_landmarks(image, results)
         flattened_keypoints = self.transform_keypoints(results)
-        sequence.insert(0, flattened_keypoints)
-        sequence = sequence[:45]
-
-        if len(sequence) == 45:
-          action_predicted = ai_coach.predict(np.expand_dims(sequence, axis=0))[0]
-          print(action_predicted)
-          action_predicted = self.pose_bank[np.argmax(action_predicted)]
-          print(action_predicted)
-          color = (120, 150, 0)
-          text_thickness = 2
-          cv2.putText(image, '{}'.format(action_predicted), (120, 80),
-                        cv2.FONT_HERSHEY_SIMPLEX, 1, color, text_thickness, cv2.LINE_AA)
+        print("FLATTENED KEYPOINT INFO: ")
+        print(len(flattened_keypoints), flattened_keypoints.reshape(1, -1))
+        action_predicted = ai_coach.predict(flattened_keypoints.reshape(1, -1))
+        print(action_predicted)
+        action_predicted = self.pose_bank[np.argmax(action_predicted)]
+        print(action_predicted)
+        color = (120, 150, 0)
+        text_thickness = 2
+        cv2.putText(image, '{}'.format(action_predicted), (120, 80),
+                      cv2.FONT_HERSHEY_SIMPLEX, 1, color, text_thickness, cv2.LINE_AA)
         
         cv2.imshow('Exercise Assistant', image)
         
